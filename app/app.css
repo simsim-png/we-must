@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+@theme {
+  --color-charcoal: #101116;
+  --color-charcoal-2: #17181f;
+  --color-charcoal-3: #21232c;
+  --color-ivory: #f2eee5;
+  --color-ivory-dim: #a9a69f;
+  --color-ivory-faint: #5e5d5c;
+  --color-cobalt: #304bff;
+  /* Lighter cobalt for small text on charcoal (6.3:1). #304BFF is large-text only there. */
+  --color-cobalt-light: #7a8bff;
+
+  --font-sans: "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --ease-brand: cubic-bezier(0.7, 0, 0.2, 1);
+  --ease-out-brand: cubic-bezier(0.2, 0.7, 0.1, 1);
+
+  --animate-breathe: breathe 14s ease-in-out infinite;
+  @keyframes breathe {
+    0%, 100% { opacity: 0.8; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.06); }
+  }
+}
+
+@layer base {
+  html {
+    background: var(--color-charcoal);
+    color: var(--color-ivory);
+    color-scheme: dark;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    font-family: var(--font-sans);
+    font-stretch: 100%;
+    line-height: 1.6;
+  }
+  h1, h2, h3, h4 { text-wrap: balance; }
+  ::selection { background: var(--color-cobalt); color: var(--color-ivory); }
+  :focus-visible { outline: 2px solid var(--color-cobalt-light); outline-offset: 3px; }
+}
+
+@utility container-site {
+  width: 100%;
+  max-width: 96rem;
+  margin-inline: auto;
+  padding-left: max(1.25rem, env(safe-area-inset-left));
+  padding-right: max(1.25rem, env(safe-area-inset-right));
+  @media (width >= 48rem) {
+    padding-left: max(2.5rem, env(safe-area-inset-left));
+    padding-right: max(2.5rem, env(safe-area-inset-right));
+  }
+}
+
+/* Display type matches the wordmark: Archivo at full width, extra bold. */
+@utility display {
+  font-weight: 800;
+  font-stretch: 125%;
+  line-height: 0.92;
+  letter-spacing: -0.015em;
+}
+@utility display-xl { font-size: clamp(2.6rem, 7.6vw, 9rem); }
+@utility display-lg { font-size: clamp(2.2rem, 5.4vw, 5.75rem); }
+@utility display-md { font-size: clamp(1.6rem, 3.2vw, 3rem); }
+
+@utility serif-accent {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-stretch: 100%;
+  letter-spacing: 0;
+  line-height: 1.12;
+}
+
+@utility label-mono {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@utility py-section {
+  padding-block: 6rem;
+  @media (width >= 64rem) { padding-block: 9rem; }
+}
+
+/* Native cursor hides only where the custom cursor shows a label. */
+.has-cursor [data-cursor="view"] { cursor: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
