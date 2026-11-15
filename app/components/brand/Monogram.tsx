@@ -1,12 +1,13 @@
 import { cn } from "~/lib/cn";
 
-// Geometry traced from the official 1080px mark (viewBox units = source pixels).
+// The official WE MUST monogram. Geometry traced from the 1080px logo file
+// (viewBox units = source pixels); proportions and colours are unchanged.
 const M = "M0 0L214 171L428 0V250H375V112L214 239L53 112V250H0Z";
 const W = "M0 267H53V406L214 279L375 406V267H428V518L214 347L0 518Z";
 
 type Props = {
   className?: string;
-  /** "dark" is for ivory backgrounds: the M turns charcoal, the W stays cobalt. */
+  /** "dark" is the lockup for ivory backgrounds: the M turns ink, the W stays cobalt. */
   variant?: "light" | "dark";
   title?: string;
 };

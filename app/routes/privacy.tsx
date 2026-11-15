@@ -1,5 +1,5 @@
 import type { MetaFunction } from "react-router";
-import { LegalPage } from "~/components/sections/LegalPage";
+import { LegalPage } from "~/components/pages/LegalPage";
 import { useLang } from "~/lib/i18n";
 import { seo } from "~/lib/seo";
 
@@ -17,7 +17,7 @@ export default function Privacy() {
   if (lang === "en") {
     return (
       <LegalPage title="Privacy policy">
-        <section><h2>Data we collect</h2><p>Through the contact form: your name, company, email address or phone number, the services you are interested in and your message.</p></section>
+        <section><h2>Data we collect</h2><p>If you use the contact form: your name, your email address or phone number, and your message.</p></section>
         <section><h2>Why</h2><p>Only to reply to your request and, if you become a client, to follow up on your project. Your data is never sold or shared for advertising.</p></section>
         <section><h2>Retention</h2><p>[Duration, e.g. 3 years after our last contact], then deleted.</p></section>
         <section><h2>Your rights</h2><p>Under Moroccan Law 09-08 on the protection of individuals with regard to the processing of personal data, you have the right to access, rectify and object to the processing of your data. Write to [email address].</p></section>
@@ -28,7 +28,7 @@ export default function Privacy() {
   }
   return (
     <LegalPage title="Politique de confidentialité">
-      <section><h2>Données collectées</h2><p>Via le formulaire de contact : votre nom, votre entreprise, votre adresse email ou votre numéro de téléphone, les services qui vous intéressent et votre message.</p></section>
+      <section><h2>Données collectées</h2><p>Si vous utilisez le formulaire de contact : votre nom, votre adresse email ou votre numéro de téléphone, et votre message.</p></section>
       <section><h2>Finalité</h2><p>Uniquement pour répondre à votre demande et, si vous devenez client, assurer le suivi de votre projet. Vos données ne sont jamais vendues ni utilisées à des fins publicitaires.</p></section>
       <section><h2>Durée de conservation</h2><p>[Durée, par exemple 3 ans après le dernier contact], puis suppression.</p></section>
       <section><h2>Vos droits</h2><p>Conformément à la loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel, vous disposez d’un droit d’accès, de rectification et d’opposition. Écrivez à [adresse email].</p></section>

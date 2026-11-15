@@ -1,53 +1,126 @@
 @import "tailwindcss";
 
+/*
+ * WE MUST — the universe (v3)
+ *
+ * The WebGL canvas is the page. Everything in this file is the layer of type and controls
+ * that floats above it: scenes that come into focus the way the "flou / net" poster does,
+ * a discreet heads-up display, and buttons cut at the logo's own 38.6° angle.
+ */
+
 @theme {
-  --color-charcoal: #101116;
-  --color-charcoal-2: #17181f;
-  --color-charcoal-3: #21232c;
+  /* Brand colours, sampled from the logo and the Instagram grid. */
+  --color-ink: #101116;
+  --color-ink-2: #1a1c25;
+  --color-ink-3: #282b38;
   --color-ivory: #f2eee5;
-  --color-ivory-dim: #a9a69f;
-  --color-ivory-faint: #5e5d5c;
+  --color-sand: #e2dccd;
   --color-cobalt: #304bff;
-  /* Lighter cobalt for small text on charcoal (6.3:1). #304BFF is large-text only there. */
-  --color-cobalt-light: #7a8bff;
+  /* Lighter cobalt for small text on ink (6.3:1). Plain cobalt is for large type there. */
+  --color-cobalt-soft: #7a8bff;
+  --color-midnight: #151a4d;
+  --color-amber: #ffb26b;
 
-  --font-sans: "Archivo", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Unbounded", "Arial Black", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
-  --ease-brand: cubic-bezier(0.7, 0, 0.2, 1);
-  --ease-out-brand: cubic-bezier(0.2, 0.7, 0.1, 1);
-
-  --animate-breathe: breathe 14s ease-in-out infinite;
-  @keyframes breathe {
-    0%, 100% { opacity: 0.8; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.06); }
-  }
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
 }
 
 @layer base {
   html {
-    background: var(--color-charcoal);
+    background: var(--color-ink);
     color: var(--color-ivory);
     color-scheme: dark;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    /* The scene rail shows progress; a scrollbar would cut into the picture. */
+    scrollbar-width: none;
+    overscroll-behavior: none;
   }
+  html::-webkit-scrollbar { display: none; }
   body {
     font-family: var(--font-sans);
-    font-stretch: 100%;
-    line-height: 1.6;
+    line-height: 1.5;
+    min-height: 100svh;
   }
-  h1, h2, h3, h4 { text-wrap: balance; }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
   ::selection { background: var(--color-cobalt); color: var(--color-ivory); }
-  :focus-visible { outline: 2px solid var(--color-cobalt-light); outline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--accent, currentColor); outline-offset: 3px; }
+  button { cursor: pointer; }
 }
 
-@utility container-site {
-  width: 100%;
-  max-width: 96rem;
-  margin-inline: auto;
+/* ------------------------------------------------------------------ tones */
+
+/* The interface takes its colours from the world the visitor is in. */
+.stage {
+  --fg: var(--color-ivory);
+  --muted: #aeaba3;
+  --line: rgb(242 238 229 / 0.2);
+  --accent: var(--color-cobalt-soft);
+  --solid: var(--color-ivory);
+  --on-solid: var(--color-ink);
+  --scrim: 12 13 18;
+  /* How strongly the shade behind the text covers the scene (dark scenes can take more). */
+  --shade: 0.74;
+  color: var(--fg);
+  transition: color 0.7s ease;
+}
+.stage[data-tone="ivory"] {
+  --fg: var(--color-ink);
+  --muted: rgb(16 17 22 / 0.7);
+  --line: rgb(16 17 22 / 0.22);
+  --accent: var(--color-cobalt);
+  --solid: var(--color-ink);
+  --on-solid: var(--color-ivory);
+  --scrim: 242 238 229;
+  --shade: 0.46;
+}
+.stage[data-tone="cobalt"] {
+  --muted: rgb(242 238 229 / 0.9);
+  --line: rgb(242 238 229 / 0.36);
+  --accent: var(--color-ivory);
+  --scrim: 30 46 200;
+  --shade: 0.5;
+}
+.stage[data-tone="midnight"] {
+  --scrim: 10 12 38;
+}
+
+/* ------------------------------------------------------------- typography */
+
+/* Uppercase poster type for the biggest statements. */
+@utility display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 0.96;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+}
+
+/* Sentence-case headline in the voice of the Instagram posters. */
+@utility headline {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+}
+
+/* Small technical labels: scene numbers, coordinates, counters. */
+@utility label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+@utility gutter {
   padding-left: max(1.25rem, env(safe-area-inset-left));
   padding-right: max(1.25rem, env(safe-area-inset-right));
   @media (width >= 48rem) {
@@ -56,46 +129,297 @@
   }
 }
 
-/* Display type matches the wordmark: Archivo at full width, extra bold. */
-@utility display {
-  font-weight: 800;
-  font-stretch: 125%;
-  line-height: 0.92;
-  letter-spacing: -0.015em;
-}
-@utility display-xl { font-size: clamp(2.6rem, 7.6vw, 9rem); }
-@utility display-lg { font-size: clamp(2.2rem, 5.4vw, 5.75rem); }
-@utility display-md { font-size: clamp(1.6rem, 3.2vw, 3rem); }
+/* ----------------------------------------------------------------- scenes */
 
-@utility serif-accent {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 400;
-  font-stretch: 100%;
-  letter-spacing: 0;
-  line-height: 1.12;
+@layer components {
+  /* Gives the page its length. The camera reads the scroll position; nothing is laid out here. */
+  .track { pointer-events: none; }
+
+  /*
+   * A scene is a full-screen layer of type above the canvas. Only the active one is visible,
+   * and only its links and buttons take the pointer, so the 3D scene stays reachable.
+   */
+  .scene {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    pointer-events: none;
+    visibility: hidden;
+    transition: visibility 0s linear 0.55s;
+  }
+  .scene[data-active="true"] {
+    visibility: visible;
+    transition-delay: 0s;
+  }
+  .scene[data-active="true"] [data-on="true"] :is(a, button, input, textarea, label),
+  .scene[data-active="true"][data-on="true"] :is(a, button, input, textarea, label) {
+    pointer-events: auto;
+  }
+
+  /* "Flou → net": text arrives out of focus and sharpens, as on the Votre travail poster. */
+  .rv {
+    opacity: 0;
+    filter: blur(12px);
+    transform: translate3d(0, 0.9rem, 0);
+    transition: opacity 0.4s ease, filter 0.4s ease, transform 0.4s ease;
+  }
+  [data-on="true"] .rv {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+    transition:
+      opacity 0.9s var(--ease-out-expo),
+      filter 1s var(--ease-out-expo),
+      transform 1.1s var(--ease-out-expo);
+    transition-delay: calc(var(--i, 0) * 70ms + var(--d, 140ms));
+  }
+
+  /* Panels of one scene share the same place; only the current one is laid out to the eye. */
+  .panel {
+    grid-area: 1 / 1;
+    visibility: hidden;
+    transition: visibility 0s linear 0.45s;
+  }
+  .panel[data-on="true"] {
+    visibility: visible;
+    transition-delay: 0s;
+  }
+  /* On phones the text sits at the bottom of the screen, whatever its length. */
+  @media (width < 64rem) {
+    .panel { align-self: end; }
+  }
+
+  /* Soft shade behind text so it reads over any part of the scene. */
+  .shade {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    background: linear-gradient(0deg, rgb(var(--scrim) / 0.9) 0%, rgb(var(--scrim) / 0.6) 28%, transparent 60%);
+  }
+  @media (width >= 64rem) {
+    .shade {
+      background: linear-gradient(
+        90deg,
+        rgb(var(--scrim) / var(--shade)) 0%,
+        rgb(var(--scrim) / calc(var(--shade) * 0.62)) 28%,
+        transparent 52%
+      );
+    }
+  }
+  .shade-center {
+    background: radial-gradient(ellipse 70% 60% at 50% 46%, transparent 30%, rgb(var(--scrim) / 0.55) 100%);
+  }
+  [data-active="true"] > .shade { opacity: 1; }
+
+  /* ------------------------------------------------------------ controls */
+
+  /*
+   * Primary button. Its leading edge is cut to a point whose sides fall at 38.6°,
+   * the angle of the chevrons in the WE MUST monogram.
+   */
+  .btn {
+    --h: 3.25rem;
+    --cut: calc(var(--h) * 0.626);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    height: var(--h);
+    padding-left: 1.5rem;
+    padding-right: calc(var(--cut) + 0.9rem);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    background: var(--solid);
+    color: var(--on-solid);
+    clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% 50%, calc(100% - var(--cut)) 100%, 0 100%);
+    transition: background-color 0.35s ease, color 0.35s ease, padding 0.5s var(--ease-out-expo);
+  }
+  .btn:hover,
+  .btn:focus-visible {
+    background: var(--color-cobalt);
+    color: var(--color-ivory);
+    padding-left: 1.9rem;
+  }
+  .btn:focus-visible { outline: none; text-decoration: underline; text-underline-offset: 0.3em; }
+  .btn-cobalt { background: var(--color-cobalt); color: var(--color-ivory); }
+  .btn-cobalt:hover,
+  .btn-cobalt:focus-visible { background: var(--color-ivory); color: var(--color-ink); }
+  .btn-sm { --h: 2.5rem; padding-left: 1.1rem; font-size: 0.6875rem; }
+  .btn-sm:hover, .btn-sm:focus-visible { padding-left: 1.4rem; }
+
+  /* Secondary button: a hairline frame. */
+  .btn-line {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    height: 3.25rem;
+    padding-inline: 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    border: 1px solid var(--line);
+    color: var(--fg);
+    transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+  }
+  .btn-line:hover,
+  .btn-line:focus-visible {
+    border-color: var(--fg);
+    background: var(--fg);
+    color: var(--on-solid);
+  }
+
+  /* Text link with a line that draws itself. */
+  .link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-block: 0.35rem;
+  }
+  .link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s var(--ease-out-expo);
+  }
+  .link:hover::after,
+  .link:focus-visible::after,
+  .link[aria-current="true"]::after { transform: scaleX(1); }
+
+  /* ------------------------------------------------------------- loader */
+
+  .loader {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: grid;
+    place-items: center;
+    background: #08090d;
+    color: var(--color-ivory);
+    transition: opacity 0.9s ease, visibility 0s linear 0.9s;
+  }
+  .loader[data-gone="true"] {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  /* ------------------------------------------------------ sphere labels */
+
+  .sphere-label {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 12;
+    will-change: transform;
+    pointer-events: none;
+  }
+  .sphere-label > a {
+    display: block;
+    transform: translateX(-50%);
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  [data-on="true"] > .sphere-label > a {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  /* Spheres passing behind the core carry their label on top. */
+  .sphere-label[data-up="true"] > a { transform: translate(-50%, -100%); }
+  [data-on="true"] > .sphere-label[data-dim="true"] > a { opacity: 0.35; }
+  .sphere-label .more {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition: grid-template-rows 0.5s var(--ease-out-expo), opacity 0.35s ease;
+  }
+  .sphere-label[data-hovered="true"] .more {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+  .sphere-label .more > div { overflow: hidden; }
+
+  /* --------------------------------------------------------------- rail */
+
+  .rail-tick {
+    display: block;
+    height: 1px;
+    width: 0.75rem;
+    background: currentColor;
+    opacity: 0.35;
+    transition: width 0.5s var(--ease-out-expo), opacity 0.3s ease;
+  }
+  [aria-current="true"] > .rail-tick,
+  a:hover > .rail-tick,
+  button:hover > .rail-tick {
+    width: 2rem;
+    opacity: 1;
+  }
 }
 
-@utility label-mono {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  line-height: 1.4;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+/* ------------------------------------------------------- loader animation */
+
+@keyframes loader-pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
 }
 
-@utility py-section {
-  padding-block: 6rem;
-  @media (width >= 64rem) { padding-block: 9rem; }
+@keyframes cue {
+  0% { transform: scaleY(0); transform-origin: top; }
+  45% { transform: scaleY(1); transform-origin: top; }
+  55% { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
 }
 
-/* Native cursor hides only where the custom cursor shows a label. */
-.has-cursor [data-cursor="view"] { cursor: none; }
+/* 2D fallback (no WebGL): the four worlds as discs on a CSS orbit. */
+@keyframes halo-breathe {
+  0%, 100% { opacity: 0.55; transform: scaleX(1); }
+  50% { opacity: 0.9; transform: scaleX(1.08); }
+}
+
+/*
+ * Failsafe. If scripts never run, `data-static` (set by an inline timer, or by <noscript>)
+ * turns the scenes back into an ordinary readable document.
+ */
+html[data-static] .loader { display: none; }
+html[data-static] .track { display: none; }
+html[data-static] .scene {
+  position: relative;
+  visibility: visible;
+  min-height: 70svh;
+}
+html[data-static] .panel { visibility: visible; grid-area: auto; }
+html[data-static] .rv {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+html[data-static] .shade { display: none; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
   }
+  .rv {
+    filter: none !important;
+    transform: none !important;
+    transition: opacity 0.25s linear !important;
+    transition-delay: 0ms !important;
+  }
+  .btn, .btn-line, .link::after { transition-duration: 0.01ms !important; }
 }

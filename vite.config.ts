@@ -8,4 +8,6 @@ export default defineConfig({
   resolve: {
     alias: { "~": fileURLToPath(new URL("./app", import.meta.url)) },
   },
+  // GSAP ships its plugins as ES modules without declaring it; bundle it for the prerender step.
+  ssr: { noExternal: ["gsap"] },
 });

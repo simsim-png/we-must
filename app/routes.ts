@@ -4,15 +4,17 @@ import { index, layout, prefix, route, type RouteConfig } from "@react-router/de
 function pages(lang: "fr" | "en") {
   const id = (name: string) => ({ id: `${lang}-${name}` });
   return [
+    // The universe: one scroll journey through every scene.
     index("routes/home.tsx", id("home")),
-    route("services", "routes/services.tsx", id("services")),
-    route("services/:slug", "routes/service.tsx", id("service")),
-    route("work", "routes/work.tsx", id("work")),
-    route("work/:slug", "routes/case.tsx", id("case")),
-    route("about", "routes/about.tsx", id("about")),
-    route("contact", "routes/contact.tsx", id("contact")),
+    // One world per service, entered from its sphere or directly by URL.
+    route("services/:service", "routes/world.tsx", id("world")),
     route("mentions-legales", "routes/legal.tsx", id("legal")),
     route("confidentialite", "routes/privacy.tsx", id("privacy")),
+    // URLs from earlier versions of the site now point at scenes of the universe.
+    route("services", "routes/legacy.tsx", id("legacy-services")),
+    route("work/*", "routes/legacy.tsx", id("legacy-work")),
+    route("about", "routes/legacy.tsx", id("legacy-about")),
+    route("contact", "routes/legacy.tsx", id("legacy-contact")),
   ];
 }
 

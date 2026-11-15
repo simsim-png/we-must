@@ -1,68 +1,122 @@
-# WeMust — website
+# WE MUST — the universe (v3)
 
-Creative direction: **L'Horizon**. The gap between the M and the W of the monogram becomes the
-site's main graphic device. It shows up as the horizon line under headlines, the ivory/cobalt page
-transition, the split wordmark in the footer, and the hero footage's water line.
+The site is one real-time 3D scene. The WE MUST monogram sits at the centre; four glass
+spheres orbit it, one per service. Scrolling moves a single camera through the scenes like a
+film; clicking a sphere flies the camera inside it and the sphere becomes the environment.
 
-## Stack
-
-React 19 · TypeScript · Vite · React Router 7 (all routes prerendered to static HTML) ·
-Tailwind CSS 4 · Motion · Lenis · Lucide.
+## Run it
 
 ```bash
 npm install
 npm run dev        # http://localhost:5173
-npm run build      # static site in build/client (+ sitemap.xml)
+npm run build      # static site in build/client (+ sitemap.xml, 404.html)
 npm run preview    # serve the build
 npm run typecheck
 ```
 
-French is served at `/`, English at `/en`. Slugs are the same in both languages.
+French is served at `/`, English at `/en`. Add `?lite` to any URL to see the 2D fallback.
 
-## Where things live
+## The scenes
 
-| What | File |
-| --- | --- |
-| Business details (WhatsApp, email, budget ranges) | `app/lib/site.ts` |
-| Production domain | `app/lib/constants.ts` (also update `public/robots.txt`) |
-| Services copy, FR/EN | `app/content/services.ts` |
-| Process steps | `app/content/process.ts` |
-| Portfolio projects | `app/content/work.ts` |
-| Higgsfield videos | `app/content/media.ts` + files in `public/media/` |
-| Brand colours, type, utilities | `app/app.css` |
+| # | Scene | Where |
+| --- | --- | --- |
+| 01 | Enter the universe: the monogram assembles, the horizon ignites | `/` before entering |
+| 02 | The creative universe: core + four orbiting worlds (hover, click, drag) | `/#universe` |
+| 03 | Service worlds: Branding, Shooting, Social media, Web & Apps | `/services/<id>` |
+| 04 | Selected work: six campaigns on an arc, one per camera stop | `/#work` |
+| 05 | About WE MUST: close on the monogram | `/#about` |
+| 06 | Contact: the four worlds line up | `/#contact` |
 
-## Content still needed (placeholders are visible on the site until filled)
+Every world has its own URL, prerendered to HTML with its text, so it can be linked and
+indexed. Old URLs (`/work`, `/about`, `/contact`, `/work/<slug>`) redirect to their scene.
 
-- **Portfolio**: add real projects to `app/content/work.ts`. Each project gets a prerendered page at `/work/<slug>`.
-- **Team**: portraits, names and roles in `app/routes/about.tsx`.
-- **WhatsApp number and email**: `app/lib/site.ts`. The mobile WhatsApp button appears once a number is set.
-- **Contact form**: set `VITE_FORM_ENDPOINT` (see `.env.example`), e.g. a Formspree endpoint.
-- **Legal pages**: fill in the bracketed fields in `app/routes/legal.tsx` and `privacy.tsx`, then have a lawyer review them.
-- **Hero video**: the hero currently shows a still poster (studio keyframe v1, `public/media/hero-poster.*`).
-  The share image `public/media/og.jpg` is cropped from the same still. Replace both when the final loop exists.
-- **Wordmark**: the footer wordmark is set in Archivo. Swap in the official SVG when available.
+## Stack
 
-## Adding a Higgsfield video
+React 19 · TypeScript · Vite · React Router 7 (every page prerendered) · Tailwind CSS 4 ·
+three.js · React Three Fiber · Drei · postprocessing · GSAP + ScrollTrigger · Motion · Zustand.
 
-1. Encode the master (commands are in the creative direction document):
-   `hero-1080.webm`, `hero-1080.mp4`, `hero-720x1280.mp4`, `hero-poster.avif`.
-2. Put them in `public/media/`.
-3. Fill in the entry in `app/content/media.ts`:
+## Structure
 
-```ts
-"H-01": {
-  tone: "horizon",
-  poster: "/media/hero-poster.avif",
-  video: { webm: "/media/hero-1080.webm", mp4: "/media/hero-1080.mp4" },
-  mobile: "/media/hero-720x1280.mp4",
-},
+```
+app/
+  experience/            the WebGL scene (its own lazy chunk, client only)
+    Experience.tsx         canvas, quality tiers, frame-rate watch
+    UniverseScene.tsx      composes everything below
+    CentralCore.tsx        the monogram in 3D, the horizon light, the rings
+    OrbitalSystem.tsx      orbits, drag-to-rotate, the lamps that follow a world
+    ServiceSphere.tsx      one world in glass; lazy-loads its interior
+    CameraController.tsx   the one camera: scroll path, opening, flight into a world
+    ProjectShowcase.tsx    the gallery arc
+    Atmosphere.tsx         lights, reflections, backdrop, dust
+    Effects.tsx            bloom, colour fringe, vignette, grain
+    worlds/                emblems + the four interiors (one chunk each)
+    lib/                   shaders, canvas-drawn textures, logo geometry, per-world looks
+  state/
+    layout.ts              every camera position, orbit and timing curve, as plain numbers
+    director.ts            timed transitions (opening, enter world, leave world)
+    scroll.ts              ScrollTrigger: scroll → progress → scene
+    store.ts / runtime.ts  UI state (React) and per-frame values (not React)
+  components/
+    hud/                   NavigationSystem, Loader, SphereLabels, PortalFlash, canvas host
+    scenes/                text for scenes 01, 02, 04, 05, 06
+    world/                 text for scene 03
+    fallback/              the 2D universe for devices without WebGL
+  content/                 services, campaigns, visuals, interface copy (FR + EN)
+  routes/                  layout (the stage), home, world, legal pages, 404
 ```
 
-The poster loads first. The video loads only when it scrolls into view, and never for visitors
-with reduced motion or Save-Data turned on.
+To move a camera, change a number in `app/state/layout.ts`. To change wording, edit
+`app/content/copy.ts` or `services.ts`. Brand colours live in `app/lib/palette.ts` (3D) and
+the `@theme` block of `app/app.css` (interface); keep the two in step.
 
-## Deploying
+## Brand
 
-The build is a static folder (`build/client`). On Netlify, `public/_redirects` already sends
-unknown URLs to the in-app 404 page with a real 404 status. On other hosts, point 404s at
-`__spa-fallback.html`.
+Colours are the logo's: ink `#101116`, ivory `#F2EEE5`, cobalt `#304BFF` (plus the soft cobalt
+`#7A8BFF` for small text on dark, and a warm amber used only inside the Shooting world, after
+the lighting of WE MUST's own photographs). The 3D monogram is extruded from the traced logo;
+rings and button cuts use the logo's 38.6° chevron angle.
+
+Signature lines ("Enter the universe", scene titles, the contact headline) are in English on
+both language versions; explanatory copy is translated. All of it is in `app/content/copy.ts`.
+
+## Performance and accessibility
+
+- The first paint is HTML and CSS only (about 110 kB of JS gzipped before the 3D chunk).
+- Three tiers: full effects on capable desktops; no post-processing, fewer particles and a
+  lower pixel ratio on phones and modest machines; a CSS-only universe when WebGL is missing.
+- If the frame rate stays under 30 fps the scene drops its post-processing by itself.
+- World interiors are separate chunks, fetched on hover or a few seconds after load.
+- `prefers-reduced-motion`: no orbit drift, no parallax, flights become cross-fades.
+- Every world and scene is reachable by keyboard: the sphere labels and the rail are real
+  links and buttons, `Esc` leaves a world.
+- If scripts fail, the scenes fall back to an ordinary readable page.
+
+## Content rules
+
+Nothing on the site is invented. The work shown is WE MUST's own campaigns as published on
+Instagram; there are no made-up clients, results, testimonials or awards.
+
+## Still needed from WE MUST
+
+- **Original image files.** `public/work/*.jpg|avif` are the 512×640 thumbnails Instagram
+  serves publicly; they are soft at the size the gallery shows them. Replace each file with
+  the original export (1080×1350 or larger, same name) and update `w`/`h` in
+  `app/content/visuals.ts`.
+- **Client projects.** The gallery holds six stops (`WORK_COUNT` in `app/state/layout.ts`).
+  Add real projects to `app/content/work.ts`.
+- **Official wordmark SVG.** "WEMUST" is set in the display font until the file is supplied.
+- **Email and WhatsApp.** Fill them in `app/lib/site.ts`; the buttons appear on their own.
+- **Contact form.** Set `VITE_FORM_ENDPOINT` (see `.env.example`), e.g. a Formspree URL.
+  Until then Instagram is the contact channel and no form is shown.
+- **Production domain.** Confirm it in `app/lib/constants.ts` and `public/robots.txt`.
+- **Legal pages.** Fill the bracketed fields in `app/routes/legal.tsx` and `privacy.tsx`.
+- **Share image.** `public/media/og.jpg` is from the previous design.
+
+## Deploy
+
+The build is a static folder (`build/client`).
+
+- **Vercel**: push to GitHub; `vercel.json` sets the build command, output folder, cache
+  headers and redirects. Add `VITE_FORM_ENDPOINT` under Settings → Environment Variables.
+- **Netlify**: `public/_redirects` does the same.
+- Anywhere else: serve `build/client` and point unknown URLs at `404.html`.
