@@ -80,7 +80,7 @@ export default function Experience() {
   return (
     <Canvas
       flat
-      dpr={high ? [1, 1.75] : [1, 1.5]}
+      dpr={degraded ? [1, 1.25] : [1, 1.5]}
       gl={{ antialias: quality !== "high", alpha: false, stencil: false, powerPreference: "high-performance" }}
       camera={{ fov: 30, near: 0.05, far: 400, position: [0, 0.1, 7.4] }}
       style={{ touchAction: "pan-y" }}

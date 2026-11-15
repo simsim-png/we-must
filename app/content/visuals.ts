@@ -3,7 +3,7 @@ import type { L } from "../lib/types";
 // Real WE MUST visuals, taken from the public Instagram grid (@wemustagency).
 //
 // TODO(wemust): these files are the 512×640 thumbnails Instagram serves publicly. They are
-// stand-ins. Replace each /public/work/<id>.jpg and .avif with the original export
+// stand-ins. Replace each /public/visuals/<id>.jpg and .avif with the original export
 // (1080×1350 or larger, same file name) and update `w` / `h` below.
 
 export type Visual = {
@@ -26,7 +26,7 @@ const IG = "https://www.instagram.com/wemustagency";
 export const visuals = {
   sortezDuLot: {
     id: "sortez-du-lot",
-    src: "/work/sortez-du-lot",
+    src: "/visuals/sortez-du-lot",
     w: 512,
     h: 640,
     alt: {
@@ -38,7 +38,7 @@ export const visuals = {
   },
   toutLeResteFlou: {
     id: "tout-le-reste-flou",
-    src: "/work/tout-le-reste-flou",
+    src: "/visuals/tout-le-reste-flou",
     w: 512,
     h: 640,
     alt: {
@@ -50,7 +50,7 @@ export const visuals = {
   },
   nexistezPas: {
     id: "nexistez-pas",
-    src: "/work/nexistez-pas",
+    src: "/visuals/nexistez-pas",
     w: 360,
     h: 640,
     alt: {
@@ -64,7 +64,7 @@ export const visuals = {
   },
   votreSiteRame: {
     id: "votre-site-rame",
-    src: "/work/votre-site-rame",
+    src: "/visuals/votre-site-rame",
     w: 512,
     h: 640,
     alt: {
@@ -76,7 +76,7 @@ export const visuals = {
   },
   votreTravail: {
     id: "votre-travail",
-    src: "/work/votre-travail",
+    src: "/visuals/votre-travail",
     w: 512,
     h: 640,
     alt: {
@@ -88,7 +88,7 @@ export const visuals = {
   },
   troisErreurs: {
     id: "3-erreurs",
-    src: "/work/3-erreurs",
+    src: "/visuals/3-erreurs",
     w: 512,
     h: 640,
     alt: {
@@ -100,7 +100,7 @@ export const visuals = {
   },
   unexpectedHero: {
     id: "unexpected-hero",
-    src: "/work/unexpected-hero",
+    src: "/visuals/unexpected-hero",
     w: 512,
     h: 640,
     alt: {
@@ -112,7 +112,7 @@ export const visuals = {
   },
   whoAreWe: {
     id: "who-are-we",
-    src: "/work/who-are-we",
+    src: "/visuals/who-are-we",
     w: 512,
     h: 640,
     alt: {
@@ -124,7 +124,7 @@ export const visuals = {
   },
   letUsBoost: {
     id: "let-us-boost",
-    src: "/work/let-us-boost",
+    src: "/visuals/let-us-boost",
     w: 512,
     h: 640,
     alt: {

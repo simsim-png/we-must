@@ -143,6 +143,11 @@ export function FallbackUniverse() {
           <img
             src={`${project.visual.src}.jpg`}
             alt=""
+            onError={(e) => {
+              // Never show a broken-image icon: without the file, the frame simply stays out.
+              const picture = e.currentTarget.parentElement;
+              if (picture) picture.style.display = "none";
+            }}
             width={project.visual.w}
             height={project.visual.h}
             className="h-[38svh] w-auto border border-ivory/30 lg:h-[66svh]"

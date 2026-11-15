@@ -1,6 +1,5 @@
-import { useTexture } from "@react-three/drei";
 import { useEffect, useMemo } from "react";
-import { CanvasTexture, SRGBColorSpace, type Texture } from "three";
+import { CanvasTexture, SRGBColorSpace, type Texture, TextureLoader } from "three";
 import type { Visual } from "~/content/visuals";
 import { palette } from "~/lib/palette";
 
@@ -62,17 +61,54 @@ export function useDrawnTexture(w: number, h: number, draw: Draw): CanvasTexture
   return made.texture;
 }
 
-/** Campaign visuals as sRGB textures (suspends while loading). */
+type Loaded = { texture: Texture | null; promise: Promise<void> };
+const visualCache = new Map<string, Loaded>();
+
+/** Flat ink stand-in for a picture that could not be loaded. */
+function placeholderTexture() {
+  return drawn(4, 5, (ctx, w, h) => {
+    ctx.fillStyle = palette.ink2;
+    ctx.fillRect(0, 0, w, h);
+  }).texture;
+}
+
+function loadVisual(url: string): Loaded {
+  let entry = visualCache.get(url);
+  if (!entry) {
+    const created: Loaded = { texture: null, promise: Promise.resolve() };
+    created.promise = new Promise<void>((resolve) => {
+      new TextureLoader().load(
+        url,
+        (texture) => {
+          texture.colorSpace = SRGBColorSpace;
+          texture.anisotropy = 8;
+          created.texture = texture;
+          resolve();
+        },
+        undefined,
+        () => {
+          // A missing picture must never take the whole scene down with it.
+          console.warn(`[wemust] could not load ${url}`);
+          created.texture = placeholderTexture();
+          resolve();
+        },
+      );
+    });
+    visualCache.set(url, created);
+    entry = created;
+  }
+  return entry;
+}
+
+/**
+ * Campaign visuals as sRGB textures (suspends while loading). If a file fails to load, a
+ * plain dark panel takes its place and everything else carries on.
+ */
 export function useVisualTextures(visuals: Visual[]): Texture[] {
-  const textures = useTexture(visuals.map((v) => `${v.src}.jpg`));
-  useMemo(() => {
-    for (const t of textures) {
-      t.colorSpace = SRGBColorSpace;
-      t.anisotropy = 8;
-      t.needsUpdate = true;
-    }
-  }, [textures]);
-  return textures;
+  const entries = visuals.map((v) => loadVisual(`${v.src}.jpg`));
+  const pending = entries.filter((e) => !e.texture);
+  if (pending.length) throw Promise.all(pending.map((e) => e.promise));
+  return entries.map((e) => e.texture!);
 }
 
 /* ------------------------------------------------------------------ glows */

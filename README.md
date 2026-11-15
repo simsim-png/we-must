@@ -98,7 +98,7 @@ Instagram; there are no made-up clients, results, testimonials or awards.
 
 ## Still needed from WE MUST
 
-- **Original image files.** `public/work/*.jpg|avif` are the 512×640 thumbnails Instagram
+- **Original image files.** `public/visuals/*.jpg|avif` are the 512×640 thumbnails Instagram
   serves publicly; they are soft at the size the gallery shows them. Replace each file with
   the original export (1080×1350 or larger, same name) and update `w`/`h` in
   `app/content/visuals.ts`.

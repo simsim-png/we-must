@@ -68,7 +68,7 @@
       ]
     },
     {
-      "source": "/work/(.*)\\.(avif|jpg|jpeg|png|webp|mp4|webm)",
+      "source": "/visuals/(.*)",
       "headers": [
         {
           "key": "Cache-Control",

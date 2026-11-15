@@ -8,6 +8,7 @@ import { UniverseOverlay } from "~/components/scenes/UniverseOverlay";
 import { WorkScene } from "~/components/scenes/WorkScene";
 import { HASH_STATIONS } from "~/lib/route";
 import { organizationLd, seo } from "~/lib/seo";
+import { skipIntro } from "~/state/director";
 import { STATION, STATION_COUNT } from "~/state/layout";
 import { scrollToStep, useScrollTrack } from "~/state/scroll";
 import { getState, setState, useStore } from "~/state/store";
@@ -35,6 +36,7 @@ export default function Home() {
   const track = useRef<HTMLDivElement>(null);
   const reduced = useStore((s) => s.reduced);
   const arrived = useStore((s) => s.arrived);
+  const ready = useStore((s) => s.ready);
   const transit = useStore((s) => s.transit);
   const { hash, key } = useLocation();
   const handled = useRef<string | null>(null);
@@ -53,11 +55,14 @@ export default function Home() {
   // /#work, /#about, /#contact (and the old /work, /about, /contact URLs) land on their scene.
   useEffect(() => {
     const target = HASH_STATIONS[hash];
-    if (!target || !arrived || transit !== "idle" || handled.current === key) return;
+    if (!target) return;
+    // An anchor that arrives while the opening is still on screen skips straight past it.
+    if (ready && !getState().entered) skipIntro();
+    if (!arrived || transit !== "idle" || handled.current === key) return;
     const first = handled.current === null && !getState().lifted;
     handled.current = key;
     scrollToStep(STATION[target], first);
-  }, [hash, key, arrived, transit]);
+  }, [hash, key, arrived, transit, ready]);
 
   return (
     <>
